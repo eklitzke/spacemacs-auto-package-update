@@ -14,14 +14,14 @@
 ;; limitations under the License.
 
 (defvar spacemacs-auto-package-update/age (* 7 86400)
-  "Age in seconds to wait before updating")
+  "Automatically apply updates if this many seconds have passed.")
 
 (defvar spacemacs-auto-package-update/file
   "~/.emacs.d/private/last-package-update"
-  "The file to track update times using.")
+  "The mtime of this file is used to track the last update time.")
 
 (defun spacemacs-auto-package-update/do-update (update-file)
-  "Do a package update and update the timestamp on the update fille."
+  "Do a package update and update the timestamp on the update file."
   (message "Need to do automatic spacemacs package update")
   (configuration-layer/update-packages t)
   (with-temp-file update-file (save-buffer)))
