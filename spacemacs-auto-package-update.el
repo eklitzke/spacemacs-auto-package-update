@@ -13,6 +13,8 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
+(require 'cl)
+
 (defvar spacemacs-auto-package-update/age (* 7 86400)
   "Automatically apply updates if this many seconds have passed.")
 
@@ -20,21 +22,27 @@
   "~/.emacs.d/private/last-package-update"
   "The mtime of this file is used to track the last update time.")
 
-(defun spacemacs-auto-package-update/do-update (update-file)
-  "Do a package update and update the timestamp on the update file."
-  (message "Need to do automatic spacemacs package update")
+(defun spacemacs-auto-package-update~file-age (attr)
+  "Get the mtime age of attr in seconds."
+  (cl-flet ((secs (t) (time-convert t 'integer)))
+    (let ((now (secs nil))
+          (mtime (secs (file-attribute-modification-time attr))))
+      (- now mtime))))
+
+(defun spacemacs-auto-package-update/apply-updates (update-file)
+  "Apply package updates and update mtime of update-file."
+  (message "Updating spacemacs packages for spacemacs-auto-package-update")
   (configuration-layer/update-packages t)
   (with-temp-file update-file (save-buffer)))
 
-(defun spacemacs-auto-package-update/check-and-apply-update ()
-  "Apply an update if the file is too old or doesn't exist."
-  (let ((update-file (expand-file-name spacemacs-auto-package-update/file)))
-    (when (or (not (file-exists-p update-file))
-              (let* ((now (time-convert nil 'integer))
-                     (last-seen (time-convert (file-attribute-modification-time (file-attributes update-file)) 'integer))
-                     (delta (- now last-seen)))
-                (>= delta spacemacs-auto-package-update/age)))
-      (spacemacs-auto-package-update/do-update update-file))))
+(defun spacemacs-auto-package-update/check-and-apply-updates ()
+  "Apply updates if the update file is too old (or doesn't exist)."
+  (let* ((update-file (expand-file-name spacemacs-auto-package-update/file))
+         (attr (file-attributes update-file))
+         (age (if (null attr) spacemacs-auto-package-update/age
+                (spacemacs-auto-package-update~file-age attr))))
+    (when (>= age spacemacs-auto-package-update/age)
+      (spacemacs-auto-package-update/apply-updates update-file))))
 
 (provide 'spacemacs-auto-package-update)
 ;;; spacemacs-auto-package-update.el ends here

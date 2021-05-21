@@ -17,7 +17,7 @@ Add some code like this to the `dotspacemacs/user-config` function in your
 ;; Load the package and invoke the update check.
 (use-package spacemacs-auto-package-update
  :load-path "~/path/to/spacemacs-auto-package-update"
- :config (spacemacs-auto-package-update/check-and-apply-update))
+ :config (spacemacs-auto-package-update/check-and-apply-updates))
 ```
 
 You can also customize `spacemacs-auto-package-update/age` with the number of
