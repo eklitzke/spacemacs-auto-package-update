@@ -13,7 +13,7 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-(defvar spacemacs-auto-package-update/age 86400
+(defvar spacemacs-auto-package-update/age (* 7 86400)
   "Age in seconds to wait before updating")
 
 (defvar spacemacs-auto-package-update/file
